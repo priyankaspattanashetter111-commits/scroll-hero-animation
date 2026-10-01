@@ -9,6 +9,22 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Key animation tuning numbers
+const INTRO_LETTER_STAGGER = 0.05;
+const INTRO_STATS_STAGGER = 0.15;
+const PIN_LENGTH = "+=300%";
+const SCRUB_VALUE = 1;
+const WHEEL_ROTATION = 1080;
+const CAR_MARGIN_DESKTOP = 64;
+const CAR_MARGIN_MOBILE = 24;
+const STATS_PARALLAX_DESKTOP = -68;
+const STATS_PARALLAX_MOBILE = -36;
+const ROAD_SHIFT_DESKTOP = -320;
+const ROAD_SHIFT_MOBILE = -160;
+const BG_SHIFT_X_DESKTOP = -60;
+const BG_SHIFT_X_MOBILE = -30;
+const BG_SHIFT_Y = -24;
+
 export function useHeroAnimation({
   heroRef,
   statsRef,
@@ -29,8 +45,8 @@ export function useHeroAnimation({
         const statCards = heroRef.current.querySelectorAll(".stat-card");
         const statNumbers = heroRef.current.querySelectorAll(".stat-number");
 
-        gsap.set(letters, { opacity: 1, y: 0, filter: "none", color: "#e2e8f0" });
-        gsap.set(litLetters, { opacity: 0.85 });
+        gsap.set(letters, { opacity: 1, y: 0, filter: "none", color: "#f2efe8" });
+        gsap.set(litLetters, { opacity: 1 });
         gsap.set(statCards, { opacity: 1, y: 0 });
         if (carRef.current) gsap.set(carRef.current, { opacity: 1, x: 0 });
 
@@ -64,30 +80,31 @@ export function useHeroAnimation({
           { target: 40, decimals: 0, suffix: "%" },
         ];
 
-        // 1. Initial Page Load Animation Timeline (~2.5s total)
+        // Sequence initial entrance animations on page load so they play in order.
         const loadTimeline = gsap.timeline({
           defaults: { ease: "power3.out" },
         });
 
-        // Letters stagger in with blur and translateY
+        // Stagger in each headline letter with blur and upward movement for a smooth text reveal.
         loadTimeline.fromTo(
           letters,
           { opacity: 0, y: 40, filter: "blur(8px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.05, duration: 0.7 }
+          { opacity: 1, y: 0, filter: "blur(0px)", stagger: INTRO_LETTER_STAGGER, duration: 0.7 }
         );
 
-        // Stats cards fade in
+        // Fade in each stat column one by one shortly before the letters finish.
         loadTimeline.fromTo(
           statCards,
           { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, stagger: 0.15, duration: 0.6 },
+          { opacity: 1, y: 0, stagger: INTRO_STATS_STAGGER, duration: 0.6 },
           "-=0.35"
         );
 
-        // Counter tweens attached alongside stat cards reveal
+        // Animate the numbers counting up from zero to their real values during the intro.
         statsTargets.forEach((item, index) => {
           const counter = { val: 0 };
           const numEl = statNumbers[index];
+          // Tween a counter object so we can format and write each number to the DOM on each frame.
           loadTimeline.to(
             counter,
             {
@@ -106,7 +123,7 @@ export function useHeroAnimation({
           );
         });
 
-        // Sports car slides in last from left
+        // Slide the sports car into its starting spot last to complete the intro scene.
         if (carRef.current) {
           loadTimeline.fromTo(
             carRef.current,
@@ -116,25 +133,27 @@ export function useHeroAnimation({
           );
         }
 
-        // 2. Scroll-Driven Animation Timeline with ScrollTrigger
+        // Calculate travel distance so the car stops just before hitting the right screen edge.
         const carEl = carRef.current;
         const carWidth = carEl ? carEl.offsetWidth : (isMobile ? 240 : 380);
-        // Calculate travel distance so the car reaches near the right edge
-        const travelDistance = Math.max(160, window.innerWidth - carWidth - (isMobile ? 24 : 64));
+        const rightMargin = isMobile ? CAR_MARGIN_MOBILE : CAR_MARGIN_DESKTOP;
+        const travelDistance = Math.max(160, window.innerWidth - carWidth - rightMargin);
 
+        // Timeline that pins the hero and scrubs all animations in sync with the user's scroll.
         const scrollTimeline = gsap.timeline({
+          // Pin the hero section for 300% scroll distance and link all animation progress directly to the scrollbar.
           scrollTrigger: {
             trigger: heroRef.current,
             start: "top top",
-            end: "+=300%",
+            end: PIN_LENGTH,
             pin: true,
-            scrub: 1,
+            scrub: SCRUB_VALUE,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        // Move car across the screen
+        // Move the car from the left edge toward the right edge based on scroll position.
         if (carEl) {
           scrollTimeline.to(
             carEl,
@@ -146,11 +165,11 @@ export function useHeroAnimation({
             0
           );
 
-          // Rotate wheels around their center SVG coordinates
+          // Rotate the rear wheel around its axle center point as the car moves.
           scrollTimeline.to(
             ".car-wheel-rear",
             {
-              rotation: 1080,
+              rotation: WHEEL_ROTATION,
               svgOrigin: "105 90",
               ease: "none",
               duration: 1,
@@ -158,10 +177,11 @@ export function useHeroAnimation({
             0
           );
 
+          // Rotate the front wheel around its axle center point at the exact same rate.
           scrollTimeline.to(
             ".car-wheel-front",
             {
-              rotation: 1080,
+              rotation: WHEEL_ROTATION,
               svgOrigin: "305 90",
               ease: "none",
               duration: 1,
@@ -175,6 +195,7 @@ export function useHeroAnimation({
           const letterStep = 0.75 / litLetters.length;
           litLetters.forEach((litSpan, index) => {
             const letterStart = 0.08 + index * letterStep;
+            // Fade in the orange color on each letter right as the car drives underneath it.
             scrollTimeline.to(
               litSpan,
               {
@@ -187,12 +208,12 @@ export function useHeroAnimation({
           });
         }
 
-        // Parallax: stats move upward at a slower rate
+        // Move stats upward at a slower speed to create a subtle vertical parallax effect.
         if (statsRef.current) {
           scrollTimeline.to(
             statsRef.current,
             {
-              y: isMobile ? -36 : -68,
+              y: isMobile ? STATS_PARALLAX_MOBILE : STATS_PARALLAX_DESKTOP,
               ease: "none",
               duration: 1,
             },
@@ -200,12 +221,12 @@ export function useHeroAnimation({
           );
         }
 
-        // Road speed dashes shift leftward
+        // Shift road dashed lines to the left to simulate motion beneath the tires.
         if (roadDashesRef.current) {
           scrollTimeline.to(
             roadDashesRef.current,
             {
-              x: isMobile ? -160 : -320,
+              x: isMobile ? ROAD_SHIFT_MOBILE : ROAD_SHIFT_DESKTOP,
               ease: "none",
               duration: 1,
             },
@@ -213,13 +234,13 @@ export function useHeroAnimation({
           );
         }
 
-        // Background subtle parallax shift for depth
+        // Shift the background slightly slower than the road to give depth to the scene.
         if (bgRef.current) {
           scrollTimeline.to(
             bgRef.current,
             {
-              x: isMobile ? -30 : -60,
-              y: -24,
+              x: isMobile ? BG_SHIFT_X_MOBILE : BG_SHIFT_X_DESKTOP,
+              y: BG_SHIFT_Y,
               ease: "none",
               duration: 1,
             },

@@ -28,42 +28,45 @@ export default function Hero() {
     <section
       ref={heroRef}
       id="hero"
-      className="relative w-full h-screen h-[100dvh] flex flex-col justify-between overflow-hidden bg-[#05060f]"
+      className="relative w-full h-screen h-[100dvh] flex flex-col justify-between overflow-hidden bg-[#0f0f0e]"
     >
-      {/* Background with deep blue/purple gradient and parallax grid */}
+      {/* Background: Solid warm tone with soft vignette */}
       <div
         ref={bgRef}
         className="absolute inset-0 pointer-events-none will-change-transform"
       >
-        {/* Radial ambient lighting */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,#1c1340_0%,#0c0f28_45%,#05060f_90%)]" />
-
-        {/* Ambient cyan glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/10 rounded-full blur-[120px]" />
-
-        {/* Subtle cyber background grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,#161513_0%,#0f0f0e_80%)]" />
+        {/* Subtle vignette border gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_60%,rgba(0,0,0,0.35)_100%)] opacity-70" />
       </div>
 
-      {/* Top Bar Navigation / Indicator */}
-      <header className="relative z-20 w-full max-w-7xl mx-auto px-6 pt-6 sm:pt-8 flex items-center justify-between text-xs tracking-widest text-slate-400 uppercase">
-        <div className="flex items-center gap-2 font-bold text-slate-200">
-          <span className="w-2 h-2 rounded-full bg-[#00f0ff] shadow-[0_0_8px_#00f0ff]" />
-          <span>ITZFIZZ</span>
-        </div>
-        <div className="hidden sm:flex items-center gap-6 font-mono text-[11px] text-slate-400">
-          <span>SCROLL TO ACCELERATE</span>
-          <span className="text-cyan-400">300% SCRUB</span>
+      {/* Header: Plain wordmark and simple Scroll indicator */}
+      <header className="relative z-20 w-full max-w-7xl mx-auto px-6 pt-6 sm:pt-8 flex items-center justify-between text-xs tracking-wider">
+        <span className="font-heading font-extrabold text-sm sm:text-base tracking-[0.2em] text-[#f2efe8]">
+          ITZFIZZ
+        </span>
+        <div className="flex items-center gap-1.5 text-xs text-[#8a8780] uppercase tracking-widest select-none">
+          <span>Scroll</span>
+          <svg
+            className="w-3.5 h-3.5 text-[#ff5a1f]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
         </div>
       </header>
 
       {/* Center Group: Headline and Key Stats */}
-      <div className="relative z-20 flex flex-col items-center justify-center gap-6 sm:gap-10 my-auto py-2">
+      <div className="relative z-20 flex flex-col items-center justify-center gap-8 sm:gap-12 my-auto py-2">
         <Headline />
         <Stats statsRef={statsRef} />
       </div>
 
-      {/* Bottom Area: Sports Car and Glowing Road */}
+      {/* Bottom Area: Sports Car and Road Line */}
       <div className="relative w-full flex flex-col justify-end">
         <Car carRef={carRef} />
         <Road roadRef={roadRef} roadDashesRef={roadDashesRef} />
