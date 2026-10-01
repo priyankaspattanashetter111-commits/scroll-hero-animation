@@ -5,16 +5,28 @@ const archivo = Archivo({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 const inter = Inter({
   variable: "--font-body",
   subsets: ["latin"],
+  display: "swap",
 });
 
+export const viewport = {
+  themeColor: "#0f0f0e",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata = {
-  title: "ITZFIZZ — Digital Studio",
-  description: "Independent digital product studio crafting high-velocity digital experiences.",
+  title: "ITZFIZZ — High-Velocity Digital Studio",
+  description:
+    "Interactive scroll-driven hero experience showcasing performance web engineering and fluid motion.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({ children }) {

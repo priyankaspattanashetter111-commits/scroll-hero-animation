@@ -64,3 +64,22 @@ Browsers render web pages in three stages: **Layout** (calculating positions), *
 - **`useGSAP`**: React components can mount and unmount multiple times (especially with Fast Refresh and Strict Mode). The `@gsap/react` hook automatically records all GSAP animations, timelines, and ScrollTriggers created inside it and cleans them up (`revert()`) when the component unmounts. This prevents memory leaks and orphaned scroll listeners.
 - **`gsap.matchMedia`**: Acts like CSS media queries for JavaScript animation logic. It allows desktop viewports (`min-width: 768px`) and mobile viewports (`max-width: 767px`) to have different travel distances and margins.
 - **Accessibility**: It provides a clean fallback for `prefers-reduced-motion: reduce`. For users sensitive to motion, all pinning and heavy movement are disabled and content is rendered statically.
+
+---
+
+## 7. How Purposeful Stat Reveals Work
+
+Instead of revealing all stats simultaneously, each of the four columns activates in sequence as the sports car drives across the screen:
+- Each stat column has an initial unactivated state (`opacity: 0.45`).
+- In the scroll timeline, column opacity and top indicator lines (`.stat-indicator`) are triggered at key milestones along the car's horizontal travel (`0.12`, `0.34`, `0.56`, `0.78`).
+- When the car reaches a column, that column brightens to full opacity and its top hairline indicator illuminates. If the user scrolls backwards, it dims back down.
+
+---
+
+## 8. How the Progress Bar Works
+
+At the top of the viewport sits a fixed 2px orange line.
+- It starts at `transform: scaleX(0)` with `transform-origin: left`.
+- In the scroll timeline, it scales from `0` to `1` across the full duration of the pin using `scaleX` only.
+- Animating `scaleX` instead of `width` ensures the progress bar is composited entirely on the GPU without triggering layout reflow.
+

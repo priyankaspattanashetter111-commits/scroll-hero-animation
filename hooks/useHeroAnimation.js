@@ -31,6 +31,7 @@ export function useHeroAnimation({
   carRef,
   roadDashesRef,
   bgRef,
+  progressBarRef,
 }) {
   useGSAP(
     () => {
@@ -43,12 +44,15 @@ export function useHeroAnimation({
         const letters = heroRef.current.querySelectorAll(".headline-letter");
         const litLetters = heroRef.current.querySelectorAll(".headline-letter-lit");
         const statCards = heroRef.current.querySelectorAll(".stat-card");
+        const statIndicators = heroRef.current.querySelectorAll(".stat-indicator");
         const statNumbers = heroRef.current.querySelectorAll(".stat-number");
 
-        gsap.set(letters, { opacity: 1, y: 0, filter: "none", color: "#f2efe8" });
+        gsap.set(letters, { opacity: 1, y: 0, filter: "none" });
         gsap.set(litLetters, { opacity: 1 });
         gsap.set(statCards, { opacity: 1, y: 0 });
+        gsap.set(statIndicators, { opacity: 1 });
         if (carRef.current) gsap.set(carRef.current, { opacity: 1, x: 0 });
+        if (progressBarRef?.current) gsap.set(progressBarRef.current, { scaleX: 1 });
 
         const targets = ["98%", "3.5x", "120+", "40%"];
         statNumbers.forEach((el, idx) => {
@@ -70,6 +74,7 @@ export function useHeroAnimation({
         const letters = heroRef.current.querySelectorAll(".headline-letter");
         const litLetters = heroRef.current.querySelectorAll(".headline-letter-lit");
         const statCards = heroRef.current.querySelectorAll(".stat-card");
+        const statIndicators = heroRef.current.querySelectorAll(".stat-indicator");
         const statNumbers = heroRef.current.querySelectorAll(".stat-number");
 
         // Target values for number counter intro
@@ -80,23 +85,28 @@ export function useHeroAnimation({
           { target: 40, decimals: 0, suffix: "%" },
         ];
 
+        // Ensure clean initial states before timeline starts to eliminate any paint flicker
+        gsap.set(letters, { opacity: 0, y: 40, filter: "blur(8px)" });
+        gsap.set(statCards, { opacity: 0, y: 24 });
+        gsap.set(statIndicators, { opacity: 0 });
+        if (carRef.current) gsap.set(carRef.current, { opacity: 0, x: -160 });
+        if (progressBarRef?.current) gsap.set(progressBarRef.current, { scaleX: 0 });
+
         // Sequence initial entrance animations on page load so they play in order.
         const loadTimeline = gsap.timeline({
           defaults: { ease: "power3.out" },
         });
 
         // Stagger in each headline letter with blur and upward movement for a smooth text reveal.
-        loadTimeline.fromTo(
+        loadTimeline.to(
           letters,
-          { opacity: 0, y: 40, filter: "blur(8px)" },
           { opacity: 1, y: 0, filter: "blur(0px)", stagger: INTRO_LETTER_STAGGER, duration: 0.7 }
         );
 
-        // Fade in each stat column one by one shortly before the letters finish.
-        loadTimeline.fromTo(
+        // Fade in each stat column softly in an unactivated state so they are ready for scroll reveal.
+        loadTimeline.to(
           statCards,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, stagger: INTRO_STATS_STAGGER, duration: 0.6 },
+          { opacity: 0.45, y: 0, stagger: INTRO_STATS_STAGGER, duration: 0.6 },
           "-=0.35"
         );
 
@@ -125,17 +135,16 @@ export function useHeroAnimation({
 
         // Slide the sports car into its starting spot last to complete the intro scene.
         if (carRef.current) {
-          loadTimeline.fromTo(
+          loadTimeline.to(
             carRef.current,
-            { x: -160, opacity: 0 },
             { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" },
             "-=0.4"
           );
         }
 
-        // Calculate travel distance so the car stops just before hitting the right screen edge.
+        // Calculate travel distance once upfront without layout reads inside scroll callbacks.
         const carEl = carRef.current;
-        const carWidth = carEl ? carEl.offsetWidth : (isMobile ? 240 : 380);
+        const carWidth = carEl ? carEl.offsetWidth : (isMobile ? 280 : 540);
         const rightMargin = isMobile ? CAR_MARGIN_MOBILE : CAR_MARGIN_DESKTOP;
         const travelDistance = Math.max(160, window.innerWidth - carWidth - rightMargin);
 
@@ -152,6 +161,19 @@ export function useHeroAnimation({
             invalidateOnRefresh: true,
           },
         });
+
+        // Advance the top progress bar using hardware-accelerated scaleX transform only.
+        if (progressBarRef?.current) {
+          scrollTimeline.to(
+            progressBarRef.current,
+            {
+              scaleX: 1,
+              ease: "none",
+              duration: 1,
+            },
+            0
+          );
+        }
 
         // Move the car from the left edge toward the right edge based on scroll position.
         if (carEl) {
@@ -205,6 +227,36 @@ export function useHeroAnimation({
               },
               letterStart
             );
+          });
+        }
+
+        // Reveal each stat column sequentially as the car drives past it across the screen.
+        if (statCards.length > 0) {
+          statCards.forEach((card, index) => {
+            // Position triggers spaced out across the car journey
+            const cardStart = 0.12 + index * 0.22;
+            scrollTimeline.to(
+              card,
+              {
+                opacity: 1,
+                duration: 0.12,
+                ease: "power1.in",
+              },
+              cardStart
+            );
+
+            // Illuminate the top indicator bar on the active stat column
+            if (statIndicators[index]) {
+              scrollTimeline.to(
+                statIndicators[index],
+                {
+                  opacity: 1,
+                  duration: 0.1,
+                  ease: "power1.in",
+                },
+                cardStart
+              );
+            }
           });
         }
 

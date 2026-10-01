@@ -3,16 +3,21 @@ export default function Headline() {
   const secondWord = ["I", "T", "Z", "F", "I", "Z", "Z"];
 
   return (
-    <div className="w-full text-center px-4">
+    <div className="w-full text-center px-3 sm:px-6">
       <h1
         aria-label="WELCOME ITZFIZZ"
-        className="font-heading inline-flex flex-wrap items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[0.25em] md:tracking-[0.4em] uppercase select-none"
+        className="font-heading inline-flex flex-wrap items-center justify-center font-black uppercase select-none max-w-full"
+        style={{
+          fontSize: "clamp(1.15rem, 4.6vw, 4.5rem)",
+          letterSpacing: "clamp(0.12em, 1.8vw, 0.35em)",
+        }}
       >
-        <span className="inline-flex items-center mr-6 sm:mr-10 md:mr-16">
+        <span className="inline-flex items-center mr-4 sm:mr-8 md:mr-14">
           {firstWord.map((letter, index) => (
             <span
               key={`first-${index}`}
-              className="headline-letter relative inline-block mx-1 sm:mx-2 md:mx-3 text-[#383633] will-change-transform"
+              className="headline-letter relative inline-block mx-[0.06em] sm:mx-[0.12em] md:mx-[0.18em] text-[#383633] will-change-transform"
+              style={{ opacity: 0, transform: "translateY(40px)" }}
             >
               <span className="relative z-10">{letter}</span>
               <span
@@ -29,7 +34,8 @@ export default function Headline() {
           {secondWord.map((letter, index) => (
             <span
               key={`second-${index}`}
-              className="headline-letter relative inline-block mx-1 sm:mx-2 md:mx-3 text-[#383633] will-change-transform"
+              className="headline-letter relative inline-block mx-[0.06em] sm:mx-[0.12em] md:mx-[0.18em] text-[#383633] will-change-transform"
+              style={{ opacity: 0, transform: "translateY(40px)" }}
             >
               <span className="relative z-10">{letter}</span>
               <span

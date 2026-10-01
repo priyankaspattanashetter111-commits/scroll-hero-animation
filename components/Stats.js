@@ -3,22 +3,22 @@ export default function Stats({ statsRef }) {
     {
       initial: "0%",
       label: "Client Retention",
-      description: "Long-term partnerships with leading engineering teams.",
+      description: "Long-term partnerships across venture-backed engineering teams.",
     },
     {
       initial: "0.0x",
       label: "Production Velocity",
-      description: "Accelerated development cycles without compromise.",
+      description: "Rapid agile delivery cycles from initial design to deployment.",
     },
     {
       initial: "0+",
       label: "Projects Shipped",
-      description: "Flagship digital products delivered globally.",
+      description: "Scalable digital products delivered to global audiences.",
     },
     {
       initial: "0%",
       label: "Higher Conversion",
-      description: "Engineered interaction flows driving measurable impact.",
+      description: "Engineered interaction flows driving measurable revenue impact.",
     },
   ];
 
@@ -31,15 +31,21 @@ export default function Stats({ statsRef }) {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="stat-card px-4 sm:px-6 py-5 sm:py-6 text-left flex flex-col justify-start"
+            className="stat-card relative px-4 sm:px-6 py-4 sm:py-6 text-left flex flex-col justify-start will-change-transform"
+            style={{ opacity: 0, transform: "translateY(24px)" }}
           >
-            <div className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#f2efe8] tabular-nums">
+            {/* Top orange accent indicator revealed as car passes */}
+            <div
+              className="stat-indicator absolute top-0 left-0 right-0 h-[2px] bg-[#ff5a1f] opacity-0 pointer-events-none"
+              aria-hidden="true"
+            />
+            <div className="font-heading text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#f2efe8] tabular-nums">
               <span className="stat-number">{stat.initial}</span>
             </div>
-            <div className="mt-2 text-xs sm:text-sm font-medium uppercase tracking-wider text-[#8a8780]">
+            <div className="mt-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#a3a099]">
               {stat.label}
             </div>
-            <p className="mt-1 text-xs text-[#6e6b65] leading-relaxed">
+            <p className="mt-1 text-xs text-[#8a8780] leading-relaxed">
               {stat.description}
             </p>
           </div>

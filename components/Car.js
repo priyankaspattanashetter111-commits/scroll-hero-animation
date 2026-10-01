@@ -9,13 +9,15 @@ export default function Car({ carRef }) {
   return (
     <div
       ref={carRef}
-      className="absolute bottom-[18px] sm:bottom-[24px] left-2 sm:left-6 z-30 w-[240px] sm:w-[320px] md:w-[380px] pointer-events-none select-none will-change-transform"
+      className="absolute bottom-[16px] sm:bottom-[20px] md:bottom-[24px] left-2 sm:left-6 z-30 w-[280px] sm:w-[380px] md:w-[480px] lg:w-[560px] pointer-events-none select-none will-change-transform"
+      style={{ opacity: 0, transform: "translateX(-160px)" }}
     >
       <svg
         viewBox="0 0 460 120"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-auto overflow-visible"
+        aria-hidden="true"
       >
         <defs>
           {/* Studio Charcoal Chassis Gradient */}
@@ -41,7 +43,7 @@ export default function Car({ carRef }) {
           rx="160"
           ry="5.5"
           fill="#000000"
-          opacity="0.75"
+          opacity="0.8"
         />
 
         {/* Rear Wing / Aerodynamic Lip */}

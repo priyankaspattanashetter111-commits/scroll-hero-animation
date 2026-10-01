@@ -3,7 +3,7 @@
 :root {
   --bg-primary: #0f0f0e;
   --text-primary: #f2efe8;
-  --text-muted: #8a8780;
+  --text-muted: #a3a099;
   --accent-orange: #ff5a1f;
   --border-subtle: #262523;
 }
@@ -17,4 +17,10 @@ body {
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Accessible visible focus states */
+:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 3px;
 }
